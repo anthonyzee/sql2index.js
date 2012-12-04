@@ -8,7 +8,7 @@ Download sql2index.js and put it in your web application javascripts directory. 
 
 ## Usage
 
-sql2index.js create and open a database object that model Web SQL. Transaction and executeSQL in sql2index are simplified to allow basic store/put record in indexedDB. Therefore there are limited as below. 
+sql2index.js create and open a database object that model Web SQL. Transaction and executeSQL in sql2index are simplified to allow basic get/put record in indexedDB. Therefore there are limited as below. 
 
 1. transaction and table relation are not supported.
 2. sql syntax follows strictly to SQLite syntax (see [http://www.sqlite.org/lang.html](http://www.sqlite.org/lang.html))
