@@ -1,4 +1,4 @@
-//Name: sql2index.js 
+//Name: parseSQL.js 
 //Description: A polyfill to enable websql using indexedDB
 //Author: Anthony Zee
 //Version: 0.1-alpha
@@ -19,13 +19,13 @@ function openIndexedDB(){
 						}
 					};					
 					var strSql=p_Sql+" ["+p_Args+"]";
-					var sqlObj=conn.sql2index(strSql); //parse SQL				
+					var sqlObj=conn.parseSQL(strSql); //parse SQL				
 					//Processing SQL syntax to IndexedDB through Lawnchair
 					switch (sqlObj.verb.toUpperCase()){
 						case "CREATE": return retObj;break;
 						case "SELECT": 
 							var store = Lawnchair({name:sqlObj.table[0].name}, function(store) {
-								var strWhere = conn.getLawnCQuery(sqlObj);
+								var strWhere = conn.parseIDX(sqlObj);
 								if (strWhere==''){
 									store.all(function(a){
 										for (var i=0; i<a.length; i++){
@@ -62,7 +62,7 @@ function openIndexedDB(){
 							break;
 						case "DELETE": 
 							var store = Lawnchair({name:sqlObj.table[0].name}, function(store) {
-								var strWhere = conn.getLawnCQuery(sqlObj);
+								var strWhere = conn.parseIDX(sqlObj);
 								if (strWhere==''){
 									store.nuke();
 								}else{
@@ -77,7 +77,7 @@ function openIndexedDB(){
 						case "UPDATE": 
 							var store = Lawnchair({name:sqlObj.table[0].name}, function(store) {
 								var me = {};
-								var strWhere = conn.getLawnCQuery(sqlObj);
+								var strWhere = conn.parseIDX(sqlObj);
 								store.where(strWhere, function(r){
 									// compute set value
 									var count=0;				
@@ -98,8 +98,8 @@ function openIndexedDB(){
 			};
 			p_Callback(t);
 		}, //conn.transaction
-		sql2index:function(p_SQL){
-			//sql2index is a sql parser specifically for persistenceJS
+		parseSQL:function(p_SQL){
+			//parseSQL is a sql parser specifically for persistenceJS
 			//sqlparser can be improve using lexer such as https://github.com/forward/sql-parser
 			//but for now, this hardcoded sql parser is used
 			var testSQL=p_SQL;
@@ -360,9 +360,9 @@ function openIndexedDB(){
 				}
 			});
 			return sqlObj;		
-		}, //conn.sql2index
-		getLawnCQuery:function(p_sqlObj){
-			//getLawnCQuery is a Lawnchair 'where' clause generator specifically for persistenceJS
+		}, //conn.parseSQL
+		parseIDX:function(p_sqlObj){
+			//parseIDX is a Lawnchair 'where' clause generator specifically for persistenceJS
 			var strWhere="";			
 			for (var i=0; i<p_sqlObj.where.length; i++){
 				switch(p_sqlObj.where[i].expression.toUpperCase()){
@@ -399,7 +399,7 @@ function openIndexedDB(){
 				}
 			}
 			return strWhere;		
-		}//conn.getLawnCQuery
+		}//conn.parseIDX
 	}//conn
 	return conn;
 } //openIndexedDB
